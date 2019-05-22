@@ -43,7 +43,9 @@ function getRandomInt(max) {
 client.on('ready', () => {
 	console.log(`Logged in as ${client.user.tag}!`)
 	//client.user.setActivity('YouTube', { type: 'WATCHING' 'LISTENING' });
-	client.user.setActivity('Compter les moutons');
+	//client.user.setActivity('Compter les moutons');
+	//client.user.setActivity('un chat avec un arc-en-ciel aux fesses', { url: 'https://www.twitch.tv/solaryfortnite' });
+	//client.user.setActivity('un chat avec un arc-en-ciel aux fesses', {  type: 'LISTENING', url: 'https://youtu.be/QH2-TGUIwu4' });
 })
 client.on('message', msg => {
 
@@ -83,7 +85,7 @@ client.on('message', msg => {
 		msg.channel.send(":)");
 		console.log(client.commands);
 	}
-	if (msg.content === 'join') {
+	if (command === 'join') {
 		client.emit('guildMemberAdd', msg.member);
 	}
 });
