@@ -9,8 +9,15 @@ const fs = require('fs')
 const Canvas = require('canvas');
 var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 const client = new Discord.Client()
+client.commands = new Discord.Collection();
 const config = require('./config.json');
 const {convertFile}  = require('convert-svg-to-png');
+
+const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
+for (const file of commandFiles) {
+	const command = require(`./commands/${file}`);
+	client.commands.set(command.name, command);
+}
 
 const applyText = (canvas, text) => {
 	const ctx = canvas.getContext('2d');
@@ -28,6 +35,10 @@ const applyText = (canvas, text) => {
 	return ctx.font;
 };
 
+function getRandomInt(max) {
+  return Math.floor(Math.random() * Math.floor(max));
+}
+
 
 client.on('ready', () => {
 	console.log(`Logged in as ${client.user.tag}!`)
@@ -35,209 +46,44 @@ client.on('ready', () => {
 	client.user.setActivity('Compter les moutons');
 })
 client.on('message', msg => {
-  const args = msg.content.split(' '); //.slice(prefix.length).split
-  const command = args.shift().toLowerCase(); 
-  if (command === '+ping') {
-    msg.reply('Pong!')
+
+	if (!msg.content.startsWith(config.prefix) || msg.author.bot) return;
+
+  const args = msg.content.slice(config.prefix.length).split(' ');
+	const command = args.shift().toLowerCase(); 
+	
+  if (command === 'ping') {
+		client.commands.get('ping').execute(msg, args);
   }
-  if (command === '+help') {
-	var text = '\n';
-	text += '+profil <pseudo> : Affiche le profil du joueur\n\n';
-	text += '+update <pseudo> : Permet de mettre à jour le profil du joueur avant de l\'afficher\n\n';
-	text += '+build <skinNumber> <pseudo> : Met à jour le profil du joueur avec le skin souhaité\n\n';
-	text += '+build2d <skinNumber> <region> <pseudo> : Met à jour le profil du joueur avec le skin et la région souhaités\n\n';
-	text += '+skinList <englishChampionName> : Affiche la correspondance skin/numero\n\n';
-	text += '+regionList : Affiche les régions disponibles\n\n';
-	  
-    const exampleEmbed = new Discord.RichEmbed()
-	.setColor('#0099ff')
-	.setTitle('Aide : \n\nCommandes disponibles :')
-	.setDescription(text)
-	msg.channel.send(exampleEmbed);
+  if (command === 'help') {
+		client.commands.get('help').execute(msg, args, Discord, client);
   }
-  if (command === '+update') {
-    var filename = args.join(' ');
-    const inputFilePath = 'C:/xampp/htdocs/ligta/images/svgrecap/euw1/'+filename+'.svg';
-    var pseudo = args.join('');
-    axios.get('http://localhost/ligta/updateSVG.php?id='+pseudo+'&skin=0')
-    .then(function (response) {
-		if(response.data == "error"){
-			msg.channel.send("Désolé, je ne trouve pas ce joueur...");
-		}else{
-			(async() => {
-				if (fs.existsSync(inputFilePath)) {
-					const outputFilePath = await convertFile(inputFilePath);
-					const attachment = new Discord.Attachment(outputFilePath);
-					msg.channel.send(attachment);
-				}else{
-					msg.channel.send("Désolé, je ne trouve pas ce joueur...");
-				}
-			})();
-		}
-    })
-    .catch(function (error) {
-      console.log(error);
-    });
+  if (command === 'update') {
+    client.commands.get('update').execute(msg, args, Discord, axios, fs, convertFile);
   }
-  if (command === '+build') {
-	const skin = args.shift(); 
-    var filename = args.join(' ');
-    const inputFilePath = 'C:/xampp/htdocs/ligta/images/svgrecap/euw1/'+filename+'.svg';
-    var pseudo = args.join('');
-    axios.get('http://localhost/ligta/updateSVG.php?id='+pseudo+'&skin='+skin)
-    .then(function (response) {
-		if(response.data == "error"){
-			msg.channel.send("Désolé, je ne trouve pas ce joueur...");
-		}else{
-			(async() => {
-				if (fs.existsSync(inputFilePath)) {
-					const outputFilePath = await convertFile(inputFilePath);
-					const attachment = new Discord.Attachment(outputFilePath);
-					msg.channel.send(attachment);
-				}else{
-					msg.channel.send("Désolé, je ne trouve pas ce joueur...");
-				}
-			})();
-		}
-    })
-    .catch(function (error) {
-      console.log(error);
-    });
+  if (command === 'build') {
+		client.commands.get('build').execute(msg, args, Discord, axios, fs, convertFile);
   }
-  if (command === '+build2d') {
-	const skin = args.shift();
-	var clan = args.shift();
-	switch(clan.toLowerCase()){
-		case "demacia" :
-			clan = "Demacia";
-			break;
-		case "freljord":
-			clan = "Freljord";
-			break;
-		case "piltover":
-			clan = "Piltover";
-			break;
-		case "shadowisles":
-			clan = "ShadowIsles";
-			break;
-		case "zaun":
-			clan = "Zaun";
-			break;
+  if (command === 'build2d') {
+		client.commands.get('build2d').execute(msg, args, Discord, axios, fs, convertFile);
+  }
+  if (command === 'skinlist') {
+    client.commands.get('skinList').execute(msg, args, Discord, axios);
+  }
+  if (command === 'regionlist') {
+		client.commands.get('regionList').execute(msg, args, Discord);
+  }
+  if (command === 'profil') {
+    client.commands.get('profil').execute(msg, args, Discord, axios, fs, convertFile);
 	}
-    var filename = args.join(' ');
-    const inputFilePath = 'C:/xampp/htdocs/ligta/images/svgrecap/euw1/'+filename+'.svg';
-    var pseudo = args.join('');
-    axios.get('http://localhost/ligta/updateSVG.php?id='+pseudo+'&skin='+skin+'&clan='+clan)
-    .then(function (response) {
-		if(response.data == "error"){
-			msg.channel.send("Désolé, je ne trouve pas ce joueur...");
-		}else{
-			(async() => {
-				if (fs.existsSync(inputFilePath)) {
-					const outputFilePath = await convertFile(inputFilePath);
-					const attachment = new Discord.Attachment(outputFilePath);
-					msg.channel.send(attachment);
-				}else{
-					msg.channel.send("Désolé, je ne trouve pas ce joueur...");
-				}
-			})();
-		}
-    })
-    .catch(function (error) {
-      console.log(error);
-    });
-  }
-  if (command === '+skinlist') {
-    var champion = args.join(' ');
-	//console.log('http://localhost/ligta/skinList.php?champ='+champion);
-    axios.get('http://localhost/ligta/skinList.php?champ='+champion)
-    .then(function (response) {
-		if(response.data == "error"){
-			msg.channel.send("Désolé, je ne trouve pas ce champion...");
-		}else{
-			var skins = "";
-			for(let i = 0 ; i < response.data.length ; ++i){
-				skins += response.data[i].name+" : "+response.data[i].num+"\n";
-			}
-			const exampleEmbed = new Discord.RichEmbed()
-			.setColor('#0099ff')
-			.setTitle('Skins de '+champion+' : ')
-			.setDescription(skins);
-			msg.channel.send(exampleEmbed);
-		}
-		
-    })
-    .catch(function (error) {
-      console.log(error);
-    });
-  }
-  if (command === '+regionlist') {
-	var reg = "- Demacia\n- Freljord\n- Piltover\n- ShadowsIsles\n- Zaun"
-    const exampleEmbed = new Discord.RichEmbed()
-	.setColor('#0099ff')
-	.setTitle('Régions disponibles : ')
-	.setDescription(reg);
-	msg.channel.send(exampleEmbed);
-  }
-  if (command === '+profil') {
-    var filename = args.join(' ');
-    const inputFilePath = 'C:/xampp/htdocs/ligta/images/svgrecap/euw1/'+filename+'.svg';
-    if (fs.existsSync(inputFilePath)) {
-      (async() => {
-        const outputFilePath = await convertFile(inputFilePath);
-        const attachment = new Discord.Attachment(outputFilePath);
-        msg.channel.send(attachment);
-      })();
-    }else{
-      var pseudo = args.join('');
-      axios.get('http://localhost/ligta/updateSVG.php?id='+pseudo+'&skin=0')
-      .then(function (response) {
-		if(response.data == "error"){
-			msg.channel.send("Désolé, je ne trouve pas ce joueur...");
-		}else{
-			(async() => {
-				if (fs.existsSync(inputFilePath)) {
-					const outputFilePath = await convertFile(inputFilePath);
-					const attachment = new Discord.Attachment(outputFilePath);
-					msg.channel.send(attachment);
-				}else{
-					msg.channel.send("Désolé, je ne trouve pas ce joueur...");
-				}
-			})();
-		}
-        
-      })
-      .catch(function (error) {
-        console.log('http://localhost/ligta/updateSVG.php?id='+pseudo+'&skin=0');
-      });
-    }
-    
-    
-    //msg.channel.send(`Command name: ${command}\nArguments: ${args}`);
-    //msg.channel.send(`This server's name is: ${msg.guild.name}`);
-    /*const exampleEmbed = new Discord.RichEmbed()
-	.setColor('#0099ff')
-	.setTitle('Some title')
-	.setURL('https://discord.js.org/')
-	.setAuthor('Some name', 'https://i.imgur.com/wSTFkRM.png', 'https://discord.js.org')
-	.setDescription('Some description here')
-	.setThumbnail('https://i.imgur.com/wSTFkRM.png')
-	.addField('Regular field title', 'Some value here')
-	.addBlankField()
-	.addField('Inline field title', 'Some value here', true)
-	.addField('Inline field title', 'Some value here', true)
-	.addField('Inline field title', 'Some value here', true)
-	.setImage(path)
-	.setTimestamp()
-	.setFooter('Some footer text here', 'https://i.imgur.com/wSTFkRM.png');*/
-    //e.set_image(url="https://discordapp.com/assets/e4923594e694a21542a489471ecffa50.svg")
-    
+	if (command === 'pileface') {
+    client.commands.get('pileface').execute(msg, args, Discord);
 	}
-	if(command === "+debug"){
-		msg.channel.send(msg);
-		console.log(msg.member.guild.channels);
+	if(command === "debug"){
+		msg.channel.send(":)");
+		console.log(client.commands);
 	}
-	if (msg.content === '!join') {
+	if (msg.content === 'join') {
 		client.emit('guildMemberAdd', msg.member);
 	}
 });
@@ -280,6 +126,6 @@ client.on('guildMemberAdd', async member => {
 	ctx.drawImage(avatar, 50, 50, 400, 400);
 
 	const attachment = new Discord.Attachment(canvas.toBuffer(), 'welcome-image.png');
-	channel.send(`Welcome to the server, ${member}!`, attachment);
+	channel.send(`On accueille ${member} parmis nous!`, attachment);
 });
 client.login(config.token)
