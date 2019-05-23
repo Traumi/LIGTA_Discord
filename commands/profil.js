@@ -34,5 +34,5 @@ module.exports = {
             console.log('http://localhost/ligta/updateSVG.php?id='+pseudo+'&skin=0');
         });
         }
-	},
+	}
 };

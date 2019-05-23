@@ -26,5 +26,5 @@ module.exports = {
         .catch(function (error) {
             console.log(error);
         });
-	},
+	}
 };

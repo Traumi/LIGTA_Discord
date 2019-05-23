@@ -3,7 +3,7 @@ module.exports = {
 	description: 'Ping!',
 	uses: '+ping',
 	execute(msg, args) {
-        //message.channel.send('Pong.');
-        msg.reply('Pong!');
-	},
+        	//message.channel.send('Pong.');
+        	msg.reply('Pong!');
+	}
 };

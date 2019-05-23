@@ -85,7 +85,7 @@ socialBorder = function(level){
 client.on('ready', () => {
 	console.log(`Logged in as ${client.user.tag}!`)
 	//client.user.setActivity('YouTube', { type: 'WATCHING' 'LISTENING' });
-	//client.user.setActivity('Compter les moutons');
+	client.user.setActivity('Compter les moutons');
 	//client.user.setActivity('un chat avec un arc-en-ciel aux fesses', { url: 'https://www.twitch.tv/solaryfortnite' });
 	//client.user.setActivity('un chat avec un arc-en-ciel aux fesses', {  type: 'LISTENING', url: 'https://youtu.be/QH2-TGUIwu4' });
 })

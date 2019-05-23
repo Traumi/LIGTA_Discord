@@ -15,5 +15,5 @@ module.exports = {
                 .addBlankField()
                 .addField('Attention !', "Ce bot ne vous enverra jamais de MP, si jamais vous en recevez un merci de contacter au plus vite un admin")
                 msg.channel.send(exampleEmbed);
-	},
+	}
 };

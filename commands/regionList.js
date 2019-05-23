@@ -9,5 +9,5 @@ module.exports = {
         .setTitle('Régions disponibles : ')
         .setDescription(reg);
         msg.channel.send(exampleEmbed);
-	},
+	}
 };
