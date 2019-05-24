@@ -17,7 +17,6 @@ module.exports = {
                         const outputFilePath = await convertFile(inputFilePath);
                         const attachment = new Discord.Attachment(outputFilePath);
                         msg.channel.send(attachment);
-                        msg.react('👍');
                     }else{
                         msg.channel.send("Désolé, je ne trouve pas ce joueur...");
                     }
