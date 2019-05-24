@@ -1,7 +1,3 @@
-//npm i xmlhttprequest
-//npm i convert-svg-to-png
-//npm i axios
-//npm i -S canvas@next
 const Discord = require('discord.js')
 const https = require('https');
 const axios = require('axios')
