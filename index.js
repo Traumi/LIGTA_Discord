@@ -7,6 +7,7 @@ var XMLHttpRequest = require("xmlhttprequest").XMLHttpRequest;
 const client = new Discord.Client()
 client.commands = new Discord.Collection();
 const config = require('./config.json');
+const pjson = require('./package.json');
 const {convertFile}  = require('convert-svg-to-png');
 
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.js'));
@@ -31,51 +32,7 @@ const applyText = (canvas, text) => {
 	return ctx.font;
 };
 
-socialBorder = function(level){
-	if(level >= 500){
-		return 21;
-	}else if(level >= 475){
-		return 20;
-	}else if(level >= 450){
-		return 19;
-	}else if(level >= 425){
-		return 18;
-	}else if(level >= 400){
-		return 17;
-	}else if(level >= 375){
-		return 16;
-	}else if(level >= 350){
-		return 15;
-	}else if(level >= 325){
-		return 14;
-	}else if(level >= 300){
-		return 13;
-	}else if(level >= 275){
-		return 12;
-	}else if(level >= 250){
-		return 11;
-	}else if(level >= 225){
-		return 10;
-	}else if(level >= 200){
-		return 9;
-	}else if(level >= 175){
-		return 8;
-	}else if(level >= 150){
-		return 7;
-	}else if(level >= 125){
-		return 6;
-	}else if(level >= 100){
-		return 5;
-	}else if(level >= 75){
-		return 4;
-	}else if(level >= 50){
-		return 3;
-	}else if(level >= 30){
-		return 2;
-	}else{
-		return 1;
-	}
-}
+socialBorder = function(level){if(level >= 500){return 21;}else if(level >= 475){return 20;}else if(level >= 450){return 19;}else if(level >= 425){return 18;}else if(level >= 400){return 17;}else if(level >= 375){return 16;}else if(level >= 350){return 15;}else if(level >= 325){return 14;}else if(level >= 300){return 13;}else if(level >= 275){return 12;}else if(level >= 250){return 11;}else if(level >= 225){return 10;}else if(level >= 200){return 9;}else if(level >= 175){return 8;}else if(level >= 150){return 7;}else if(level >= 125){return 6;}else if(level >= 100){return 5;}else if(level >= 75){return 4;}else if(level >= 50){return 3;}else if(level >= 30){return 2;}else{return 1;}}
 
 
 client.on('ready', () => {
@@ -121,6 +78,9 @@ client.on('message', msg => {
 	}
 	if (command === 'spec') {
     client.commands.get('spec').execute(msg, args, Discord, axios, Canvas, socialBorder);
+	}
+	if (command === 'about') {
+    client.commands.get('about').execute(msg, args, Discord, pjson);
 	}
 	if(command === "debug"){
 		msg.channel.send(":)");

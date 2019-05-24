@@ -1,12 +1,12 @@
 {
-  "name": "DiscordBot",
+  "name": "TraumiBot",
   "version": "1.0.0",
-  "description": "",
+  "description": "A Riot API based Discord Bot",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
+  "keywords": ["Discord","LoL","node"],
   "author": "Traumination",
   "license": "ISC",
   "dependencies": {
