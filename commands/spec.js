@@ -255,6 +255,7 @@ module.exports = {
                         const attachment = new Discord.Attachment(canvas.toBuffer(), 'ingame.png');
                         msg.channel.send(attachment);
                         loading.delete(500);
+                        msg.react('👍');
                     })();
                 }
             })

@@ -84,7 +84,7 @@ client.on('message', msg => {
 	}
 	if(command === "debug"){
 		msg.channel.send(":)");
-		console.log(client.commands);
+		console.log(msg.member.user);
 	}
 	if (command === 'join') {
 		client.emit('guildMemberAdd', msg.member);
