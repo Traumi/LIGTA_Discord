@@ -10,7 +10,7 @@
   "author": "Traumination",
   "license": "ISC",
   "dependencies": {
-    "axios": "^0.18.0",
+    "axios": "^0.21.1",
     "canvas": "^2.5.0",
     "convert-svg-to-png": "^0.5.0",
     "discord.js": "^11.5.0",
